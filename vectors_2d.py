@@ -21,7 +21,7 @@ class Vectors2D:
     def unitVector(self):
         return f"{(self.icap)*(1/self.magnitude())}i + {(self.jcap)*(1/self.magnitude())}j"
 
-    # addition of two vectors
+    # addition of two vectors 
     def __add__(self,otherVec):
         return f"{self.icap + otherVec.icap}i + {self.jcap + otherVec.jcap}j"
 
@@ -56,13 +56,21 @@ class Vectors2D:
     def distanceBetweenPoints(self,otherVec):
         return ((self.icap - otherVec.icap)**2 + (self.jcap - otherVec.jcap)**2)**0.5
     
-    #
-    def internalBisectorVector(self,otherVec):
-        pass
+    # internal bisector vector of the given vector by Vector-Addtion of their unit vectors
+    def internalBisectorVector(self,otherVec): # verification pending
+        newVeciCap = (self.icap)*(1/self.magnitude()) + (otherVec.icap)*(1/otherVec.magnitude())
+        newVecjCap = (self.jcap)*(1/self.magnitude()) + (otherVec.jcap)*(1/otherVec.magnitude())
 
-    #
-    def externalBisectorVector(self,otherVec):
-        pass
+        return f"{newVeciCap}i + {newVecjCap}j"
+           
+
+    # external bisector vector of the given vector by Vector-Addtion of their unit vectors
+    def externalBisectorVector(self,otherVec): # verification pending
+        newVeciCap = (self.icap)*(1/self.magnitude()) + (otherVec.icap)*(1/otherVec.magnitude())
+        newVecjCap = (self.jcap)*(1/self.magnitude()) + (otherVec.jcap)*(1/otherVec.magnitude())
+
+        return f"{newVeciCap}i - {newVecjCap}j"
+           
 
     # distance of point from the origin
     def distanceFromOrigin(self):
