@@ -1,0 +1,27 @@
+Functionalities available
+
+1.  magnitude - to get magnitude of vector
+
+2.  unitVector - to get unit vector 
+
+3.  _add_ or '+' - for vector addition of two vectors
+
+4.  _sub_ or '-' - for subtraction of two vectors
+
+5.  vectorPdt - for vector product of two vectors
+
+6.  projection - to get projecion of one vector on other vector 
+
+7.  projectionVector - to get projection vector of one vector on other vector
+
+8.  angleBetweenVectors - to get angle between two vectors (in redians)
+
+9.  distanceBetweenPoints - to get distance between two points 
+
+10. internalBisectorVector - to get internal bisector of two given vectors 
+
+11. internalBisectorVector - to get internal bisector of two given vectors 
+
+12. distanceFromOrigin - to get distance of the point from the origin
+
+13. sectionFormula - 

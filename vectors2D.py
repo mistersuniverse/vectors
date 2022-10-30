@@ -3,7 +3,7 @@
 import math
 
 class Vectors2D:
-    m = 1/(2**0.5) # a random variable defined for formation of unit vector
+    m = round(1/(2**0.5),2) # a random variable defined for the formation of unit vector having value 1/root(2) by default
 
     def __init__(self,icap=m,jcap=m):
         self.icap=icap
@@ -15,106 +15,158 @@ class Vectors2D:
 
     # magnitude of vector
     def magnitude(self):
-        return (self.icap**2 + self.jcap**2)**0.5
+        return round((self.icap**2 + self.jcap**2)**0.5,2)
+
+    # angle from horizontal axis
+    def argument(self):
+        angle = math.atan(self.jcap/self.icap)
+
+        return round(angle,2)
 
     # unit vector of given vector
     def unitVector(self):
-        return f"{(self.icap)*(1/self.magnitude())}i + {(self.jcap)*(1/self.magnitude())}j"
+        return round((self.icap)/(self.magnitude()),2),round((self.jcap)/(self.magnitude()),2)
 
     # addition of two vectors 
-    def __add__(self,otherVec):
-        return f"{self.icap + otherVec.icap}i + {self.jcap + otherVec.jcap}j"
+    def __add__(vecA,vecB):
+        return (vecA.icap + vecB.icap),(vecA.jcap + vecB.jcap)
 
     # subtraction of two vectors
-    def __sub__(self,otherVec):
-        return f"{self.icap - otherVec.icap}i + {self.jcap - otherVec.jcap}j"
+    def __sub__(vecA,vecB):
+        return (vecA.icap - vecB.icap),(vecA.jcap - vecB.jcap)
 
+    # multiplication of vector by scalar
+    def __mul__(self,scalar):
+        return self.icap*scalar,self.jcap*scalar
+
+    # vector in polar form
+    def polarForm(self):
+        magnitude = self.magnitude()
+        angle = self.argument() 
+
+        return magnitude,angle
+    
     # dot product of two vectors 
-    def __mul__(self,otherVec):
-        return (self.icap * otherVec.icap) + (self.jcap * otherVec.jcap)
+    @classmethod
+    def dotPdt(cls,vecA,VecB):
+        return (vecA.icap * VecB.icap) + (vecA.jcap * VecB.jcap)
 
-    # vector product of two vectors
-    def vectorPdt(self,otherVec):
-        return f"{(self.icap * otherVec.jcap) - (self.jcap * otherVec.icap)}k"
+    # vector product of two vectors - along kCap
+    @classmethod
+    def vectorPdt(cls,vecA,vecB):
+        return (vecA.icap * vecB.jcap)-(vecA.jcap * vecB.icap)
 
-    # projection of vector self on otherVec
+    # projection of self on otherVec
+    '''Formula Used : 
+       projection of vectorA on VectorB = (dotPdt of vectorA & vectorB)/(magnitude of vectorB)
+    '''
     def projection(self,otherVec):
-        return (self * otherVec)*(1/(otherVec.magnitude()))
+        return round(Vectors2D.dotPdt(self,otherVec)/otherVec.magnitude(),2)
     
     # projection vector of self on otherVec
+    '''Formula Used : 
+       projection vector of vectorA on vectorB = (projection of vectorA on VectorB) * (unit vector of vectorB) 
+    '''
     def projectionVector(self,otherVec):
         projection=self.projection(otherVec)
-        return f"{projection*otherVec.icap*(1/otherVec.magnitude())}i + {projection*otherVec.jcap*(1/otherVec.magnitude())}j"
+        otherVecUnitVecCoordinateHorizonatal,otherVecUnitVecCoordinateVertical = otherVec.unitVector()
+        return projection*otherVecUnitVecCoordinateHorizonatal , projection*otherVecUnitVecCoordinateVertical
+        
 
-    # angle between vectors in radian
-    def angleBetweenVectors(self,otherVec):
-        cosTheta = (self * otherVec)*(1/self.magnitude())*(1/self.magnitude())
+    # angle between vectors
+    '''Formula Used : 
+       costheta = (dotPdt of VectorA & vectorB)/(magnitude of VectorA * magnitude of VectorB)
+    '''
+    @classmethod
+    def angleBetweenVectors(cls,vecA,vecB,degree=False):
+        cosTheta = Vectors2D.dotPdt(vecA,vecB)/(vecA.magnitude() * vecB.magnitude())
         theta = math.acos(cosTheta)
-        return theta
 
-    # distance between the points having specified position vectors - self and otherVec
-    def distanceBetweenPoints(self,otherVec):
-        return ((self.icap - otherVec.icap)**2 + (self.jcap - otherVec.jcap)**2)**0.5
+        if degree == False :
+            return round(theta,2)
+
+        else :
+            theta = math.degrees(theta)
+            return round(theta,2)
+
+    # distance between the points A & B having Position vectors vecA & vecB
+    @classmethod
+    def distanceBetweenPoints(cls,vecA,vecB):
+        return round(((vecA.icap - vecB.icap)**2 + (vecA.jcap - vecB.jcap)**2)**0.5,2)
+
+    # internal bisector vector of the given vector by Vector - Addtion of their unit vectors
+    '''Formula Used : Addition resultant of two unit vectors concides its internal Bisector
+    '''
+    @classmethod
+    def internalBisectorVector(cls,vecA,vecB): 
+        VecAUnitCoordinateHorizonatal,VecAUnitCoordinateVertical = vecA.unitVector()    
+        VecBUnitCoordinateHorizonatal,VecBUnitCoordinateVertical = vecB.unitVector()  
+
+        newVeciCap = VecAUnitCoordinateHorizonatal + VecBUnitCoordinateHorizonatal
+        newVecjCap = VecAUnitCoordinateVertical + VecBUnitCoordinateVertical
+        # newVeciCap = (vecA.icap)*(1/vecA.magnitude()) + (vecB.icap)*(1/vecB.magnitude())
+        # newVecjCap = (vecA.jcap)*(1/vecA.magnitude()) + (vecB.jcap)*(1/vecB.magnitude())
+        return round(newVeciCap,2),round(newVecjCap,2)
     
-    # internal bisector vector of the given vector by Vector-Addtion of their unit vectors
-    def internalBisectorVector(self,otherVec): # verification pending
-        newVeciCap = (self.icap)*(1/self.magnitude()) + (otherVec.icap)*(1/otherVec.magnitude())
-        newVecjCap = (self.jcap)*(1/self.magnitude()) + (otherVec.jcap)*(1/otherVec.magnitude())
+    # external bisector vector of the given vector by Vector - Subtraction of their unit vectors
+    '''Formula Used : Subtraction of two unit vectors concides its external Bisector
+    '''
+    @classmethod
+    def externalBisectorVector(cls,vecA,vecB): 
+        VecAUnitCoordinateHorizonatal,VecAUnitCoordinateVertical = vecA.unitVector()    
+        VecBUnitCoordinateHorizonatal,VecBUnitCoordinateVertical = vecB.unitVector()  
 
-        return f"{newVeciCap}i + {newVecjCap}j"
+        newVeciCap = VecAUnitCoordinateHorizonatal - VecBUnitCoordinateHorizonatal
+        newVecjCap = VecAUnitCoordinateVertical - VecBUnitCoordinateVertical
+        return round(newVeciCap,2),round(newVecjCap,2)
            
-
-    # external bisector vector of the given vector by Vector-Addtion of their unit vectors
-    def externalBisectorVector(self,otherVec): # verification pending
-        newVeciCap = (self.icap)*(1/self.magnitude()) + (otherVec.icap)*(1/otherVec.magnitude())
-        newVecjCap = (self.jcap)*(1/self.magnitude()) + (otherVec.jcap)*(1/otherVec.magnitude())
-
-        return f"{newVeciCap}i - {newVecjCap}j"
-           
-
     # distance of point from the origin
     def distanceFromOrigin(self):
         return self.magnitude()
-   
-if __name__=="__main__":
 
-    # while True:    
-    #     try :
-    #         x,y = input("Enter Coordinates of Vector A: ").split()
-    #         a = Vectors2D(int(x),int(y))
+    # section formula
+    '''Formula Used :
 
-    #         x,y = input("Enter Coordinates of Vector B: ").split()
-    #         b = Vectors2D(int(x),int(y))
+       m1           m2
+       |-----------||----------|
+       .            .          .
+       A            O          B
 
-    #     except Exception as e:
-    #         print("Error :",e)
-
-    #     else :
-    #         # print(a.add(b))           
-   
-    #         print(a)
-    #         print(b)
-    #         print(a+b)
-    #         break
-
-
-    a = Vectors2D(3,4)
-    b = Vectors2D(5,12)
-    c = Vectors2D() # to define unit vector
+       VectorO = (m2*vectorA + m1*vectorB)/(m1+m2)
     
-    print(f"vector a : {a}")
-    print(f"vector b : {b}")
-    print(c)
-    print(f"magnitude of vector a : {a.magnitude()}")
-    print(f"magnitude of vector b : {b.magnitude()}")
-    print(f"unit vector of a : {a.unitVector()}")
-    print(f"addition : {a+b}")
-    print(f"subtraction : {a-b}")
-    print(f"dot product : {a*b}")
-    print(f"vector product : {a.vectorPdt(b)}")
-    print(f"projection vector of a on b : {a.projection(b)}")
-    print(a.projectionVector(b))
+    '''
+    @classmethod 
+    def sectionFormula(cls,vecA,vecB,AO,BO) : # AO/BO is ratio 
+        m1,m2 = BO/(AO+BO), AO/(AO+BO)
+        
+        return round((vecA.icap*m1 + vecB.icap*m2),2),round((vecA.jcap*m1+vecB.jcap*m2),2)
+
+    # midpoint formula
+    @classmethod 
+    def midpointFormula(cls,vecA,vecB,) :
+        return round((vecA.icap+vecB.icap)/2,2),round((vecA.jcap+vecB.jcap)/2,2)
 
 
+if __name__=="__main__":
+    
+    A = Vectors2D(3,4)
+    B = Vectors2D(12,5)
+    C = Vectors2D()             #unit vector
 
-
+    print(A.magnitude(),B.magnitude(),C.magnitude())
+    print(A.argument(),B.argument(),C.argument())
+    print(A.unitVector(),B.unitVector(),C.unitVector())
+    print(A + B)
+    print(A-B)
+    print(A*2, B*2, C*3)
+    print(Vectors2D.dotPdt(A,B),Vectors2D.vectorPdt(A,B))
+    print(A.projection(B))
+    print(A.projectionVector(B))
+    print(Vectors2D.angleBetweenVectors(A,B))
+    print(Vectors2D.angleBetweenVectors(A,B,degree=True))
+    print(Vectors2D.distanceBetweenPoints(A,B))
+    print(Vectors2D.internalBisectorVector(A,B))
+    print(Vectors2D.externalBisectorVector(A,B))
+    print(A.distanceFromOrigin(),B.distanceFromOrigin())
+    print(Vectors2D.sectionFormula(A,B,2,3))
+    print(Vectors2D.midpointFormula(A,B))
